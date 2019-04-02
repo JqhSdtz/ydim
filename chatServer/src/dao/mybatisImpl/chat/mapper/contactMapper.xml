@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.mybatisImpl.chat.mapper.ContactMapper">
+    <insert id="insertContactrelship">
+        insert into contactrelships(uid1,uid2,latestContactTime)
+        values(#{uid1}, #{uid2}, #{latestContactTime});
+    </insert>
+
+    <update id="converseRelValueById">
+        update contactrelships
+        set relValue = relValue * -1
+        where uid1=#{uid1} and uid2=#{uid2};
+    </update>
+
+    <select id="selectRelShipById" resultType="java.lang.Object">
+        select relId
+        from contactrelships
+        where uid1=#{uid1} and uid2=#{uid2};
+    </select>
+
+    <resultMap id="contactsMap" type="HashMap">
+        <result property="userId" column="userId"/>
+        <result property="username" column="username"/>
+        <result property="latestContactTime" column="latestContactTime"/>
+        <result property="profileIconUrl" column="profileIconUrl"/>
+        <result property="intro" column="intro"/>
+    </resultMap>
+
+    <select id="selectContactsMapById" resultMap="contactsMap">
+        select  userId, username, latestContactTime, profileIconUrl, intro
+        from sys_user, contactrelships
+        where uid1 = #{contactId} and relValue >= 0 and userId = uid2
+        union all
+        select  userId, username, latestContactTime, profileIconUrl, intro
+        from sys_user, contactrelships
+        where uid2 = #{contactId} and relValue >= 0 and userId = uid1;
+    </select>
+
+    <update id="updateLatestContactTime">
+        update contactrelships
+        set latestContactTime=#{latestContactTime}
+        where uid1=#{uid1} and uid2=#{uid2};
+    </update>
+
+</mapper>

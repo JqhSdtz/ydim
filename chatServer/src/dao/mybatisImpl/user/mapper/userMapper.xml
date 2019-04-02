@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.mybatisImpl.user.mapper.UserMapper">
+    <insert id="insertUser">
+        insert into sys_user(userId, password, username)
+        values (#{user.userId}, #{user.password}, #{user.userName});
+    </insert>
+
+    <select id="selectUserById" resultType="bean.user.UserBean">
+        select userId, password as password, username,
+               profileIconUrl, intro
+        from sys_user
+        where userId = #{userId};
+    </select>
+    <update id="updateUserNameById">
+        update sys_user
+        set username = #{userName}
+        where userId = #{userId};
+    </update>
+    <update id="updatePasswordById">
+        update sys_user
+        set password = aes_encrypt(#{password},#{pwd_key})
+        where userId = #{userId};
+    </update>
+    <update id="updateUserInfoById">
+        update sys_user
+        set profileIconUrl= #{userInfo.profileIconUrl},intro = #{userInfo.intro}
+        where userId = #{userId};
+    </update>
+    <select id="selectUserInfoById" resultType="bean.user.UserInfoBean">
+        select profileIconUrl, intro
+        from sys_user_info
+        where userId = #{userId};
+    </select>
+</mapper>

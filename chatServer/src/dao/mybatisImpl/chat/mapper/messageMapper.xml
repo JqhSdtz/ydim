@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.mybatisImpl.chat.mapper.MessageMapper">
+    <insert id="insertOfflineMessage" parameterType="bean.chat.MessageBean">
+        insert into offlinemessage (target, messageseq, message)
+        values (#{target}, #{messageSeq}, #{message})
+        on conflict(target, messageseq) do update set messageseq = messageseq + 10000;
+    </insert>
+
+    <select id="selectMessagesByTargetId" resultType="bean.chat.MessageBean">
+        select *
+        from offlinemessage
+        where target = #{target};
+    </select>
+
+    <delete id="deleteMessagesByTargetId">
+        delete
+        from offlinemessage
+        where target = #{target};
+    </delete>
+
+    <select id="selectMaxMessageSeq" resultType="java.lang.Object">
+        select max(messageseq)
+        from offlinemessage
+        where target = #{target};
+    </select>
+</mapper>
